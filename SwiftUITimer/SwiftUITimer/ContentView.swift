@@ -12,7 +12,9 @@ struct ContentView: View {
   @State private var timeRemaining = 300
   @State private var timerActive = false
   @State private var cancellable: Cancellable? = nil
+  // 진행률
   @State private var progress: CGFloat = 1.0
+  // 회전 각도
   @State private var rotationAngle: Double = 0.0
 
     var body: some View {
@@ -26,26 +28,41 @@ struct ContentView: View {
               .frame(width: 273, height: 273)
 
             Circle()
+              .stroke(Color("TimerColor"), lineWidth: 8)
+              .padding(4)
+              .frame(width: 240, height: 240)
+
+            Circle()
               .trim(from: 0, to: progress)
               .stroke(Color("MainColor"), lineWidth: 8)
               .rotationEffect(.degrees(-90))
-              .rotationEffect(.degrees(rotationAngle))
+              //.rotationEffect(.degrees(rotationAngle))
               .padding(4)
               .frame(width: 240, height: 240)
               .animation(.easeInOut(duration: 0.1), value: progress)
               .animation(.easeInOut(duration: 0.1), value: rotationAngle)
 
-            VStack {
+
+            VStack(spacing: 10) {
               Text("GCU • KHU")
                 .font(.caption2)
+                .foregroundColor(Color.timerFont)
+                .padding([.top, .bottom], 4)
+                .padding([.leading, .trailing], 8)
+                .background(Color.timer)
+                .cornerRadius(10)
 
-              Text("GDG on Campus")
-                .font(.title3)
+              VStack(spacing: 4) {
+                Text("GDG on Campus")
+                  .font(.title3)
+                  .foregroundColor(Color.timerFont)
 
-              Text("\(formattedTime)")
-                .font(.title)
+                Text("\(formattedTime)")
+                  .font(.title)
+                  .fontWeight(.bold)
+                  .foregroundColor(Color.timerFont)
+              }
             }
-
           }
 
         /// 시작, 리셋 버튼 구현
@@ -53,28 +70,31 @@ struct ContentView: View {
             Button(action: startTimer) {
               ZStack {
                 Rectangle()
-                  .fill(Color("MainColor"))
+                  .fill(timerActive ? Color("DeactiveColor") : Color("MainColor"))
                   .frame(width: 131, height: 43)
                   .cornerRadius(12)
                 Text("Start")
                   .font(.body)
                   .font(.system(size:14))
                   .foregroundColor(.white)
+                  .foregroundColor(timerActive ? Color.white : Color("DeactiveFontColor"))
               }
             }
+            .disabled(timerActive)
 
             Button(action: resetTimer) {
               ZStack {
                 Rectangle()
-                  .fill(Color("MainColor"))
+                  .fill(!timerActive ? Color("DeactiveColor") : Color("MainColor"))
                   .frame(width: 131, height: 43)
                   .cornerRadius(12)
                 Text("Reset")
                   .font(.body)
                   .font(.system(size:14))
-                  .foregroundColor(.white)
+                  .foregroundColor(timerActive ? Color.white : Color("DeactiveFontColor"))
               }
             }
+            .disabled(!timerActive)
 
           }
         }
@@ -99,9 +119,9 @@ struct ContentView: View {
           // 진행률 계산
           progress = CGFloat(timeRemaining) / 300.0
           // 회전 각도 계산
-          rotationAngle = (progress - 1.0) * 360.0
+          rotationAngle = (1.0 - progress) * 360.0
         } else {
-          //stop timer
+          //타이머 멈추기
           stopTimer()
         }
       }
@@ -109,10 +129,11 @@ struct ContentView: View {
 
   /// 타이머 리셋 함수
   private func resetTimer() {
-    //stop timer
+    //타이머 멈추기
     stopTimer()
     timeRemaining = 300
     timerActive = false
+    progress = 1.0
   }
 
   /// 타이머 멈춤 함수
