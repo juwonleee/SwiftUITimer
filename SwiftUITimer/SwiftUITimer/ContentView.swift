@@ -76,8 +76,7 @@ struct ContentView: View {
                 Text("Start")
                   .font(.body)
                   .font(.system(size:14))
-                  .foregroundColor(.white)
-                  .foregroundColor(timerActive ? Color.white : Color("DeactiveFontColor"))
+                  .foregroundColor(timerActive ? Color("DeactiveFontColor") : Color.white)
               }
             }
             .disabled(timerActive)
@@ -91,7 +90,7 @@ struct ContentView: View {
                 Text("Reset")
                   .font(.body)
                   .font(.system(size:14))
-                  .foregroundColor(timerActive ? Color.white : Color("DeactiveFontColor"))
+                  .foregroundColor(!timerActive ? Color("DeactiveFontColor") : Color.white)
               }
             }
             .disabled(!timerActive)
