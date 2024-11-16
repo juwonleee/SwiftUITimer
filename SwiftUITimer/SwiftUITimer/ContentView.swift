@@ -28,13 +28,13 @@ struct ContentView: View {
               .frame(width: 273, height: 273)
 
             Circle()
-              .stroke(Color("TimerColor"), lineWidth: 8)
+              .stroke(Color("TimerColor"), style: .init(lineWidth: 8))
               .padding(4)
               .frame(width: 240, height: 240)
 
             Circle()
               .trim(from: 0, to: progress)
-              .stroke(Color("MainColor"), lineWidth: 8)
+              .stroke(Color("MainColor"), style: .init(lineWidth: 8, lineCap: .round))
               .rotationEffect(.degrees(-90))
               //.rotationEffect(.degrees(rotationAngle))
               .padding(4)
@@ -98,6 +98,9 @@ struct ContentView: View {
           }
         }
         .padding()
+        .onDisappear {
+          stopTimer()
+        }
       }
 
   /// 타이머 시간 형식 변경
@@ -138,7 +141,7 @@ struct ContentView: View {
   /// 타이머 멈춤 함수
   private func stopTimer() {
     cancellable?.cancel()
-    cancellable = nil
+    //cancellable = nil
   }
 
 
