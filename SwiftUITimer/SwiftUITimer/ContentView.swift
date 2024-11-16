@@ -12,6 +12,8 @@ struct ContentView: View {
   @State private var timeRemaining = 300
   @State private var timerActive = false
   @State private var cancellable: Cancellable? = nil
+  @State private var progress: CGFloat = 1.0
+  @State private var rotationAngle: Double = 0.0
 
     var body: some View {
 
@@ -24,9 +26,14 @@ struct ContentView: View {
               .frame(width: 273, height: 273)
 
             Circle()
+              .trim(from: 0, to: progress)
               .stroke(Color("MainColor"), lineWidth: 8)
+              .rotationEffect(.degrees(-90))
+              .rotationEffect(.degrees(rotationAngle))
               .padding(4)
               .frame(width: 240, height: 240)
+              .animation(.easeInOut(duration: 0.1), value: progress)
+              .animation(.easeInOut(duration: 0.1), value: rotationAngle)
 
             VStack {
               Text("GCU • KHU")
@@ -34,11 +41,9 @@ struct ContentView: View {
 
               Text("GDG on Campus")
                 .font(.title3)
-                //.font(.system(size: 20))
 
               Text("\(formattedTime)")
                 .font(.title)
-                //.font(.system(size: 42))
             }
 
           }
@@ -91,6 +96,10 @@ struct ContentView: View {
       .sink { _ in
         if timeRemaining > 0 {
           timeRemaining -= 1
+          // 진행률 계산
+          progress = CGFloat(timeRemaining) / 300.0
+          // 회전 각도 계산
+          rotationAngle = (progress - 1.0) * 360.0
         } else {
           //stop timer
           stopTimer()
